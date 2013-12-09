@@ -36,7 +36,10 @@ SeedLog::SeedLog( LogType logType /*= Managed*/, std::wstring fileName /*= L"Def
 
 	if (Managed())
 	{
-		SeedLogger::Instance().Manage(this);
+		if(!SeedLogger::Instance().Manage(this))
+		{
+			m_LogType = LogType::Unmanaged;
+		}
 	}
 
 	reference++;
@@ -117,10 +120,11 @@ void SeedLog::Write( std::wstring statement )
 	}
 	else
 	{
-		Create();
-
-		m_LogFileStream.write(logStatement.c_str(), logStatement.length());
-		m_LogFileStream.flush();
+		if (Create())
+		{
+			m_LogFileStream.write(logStatement.c_str(), logStatement.length());
+			m_LogFileStream.flush();
+		}
 	}
 }
 
@@ -144,10 +148,11 @@ void SeedLog::ClearQueue( LogQueue &logQueue )
 		std::wstring statement = logQueue.front();
 		logQueue.pop();
 
-		Create();
-
-		m_LogFileStream.write(statement.c_str(), statement.length());
-		m_LogFileStream.flush();
+		if(Create())
+		{
+			m_LogFileStream.write(statement.c_str(), statement.length());
+			m_LogFileStream.flush();
+		}
 	}
 }
 
@@ -177,6 +182,7 @@ void SeedLogger::Close()
 	{
 		m_LogList.clear();
 	}
+
 	if (m_ThreadID)
 	{
 		SetEvent(m_hEnd);

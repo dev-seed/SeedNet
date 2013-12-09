@@ -18,7 +18,7 @@ public :
 public :
 	inline bool			Empty()
 	{
-		bool tempEmpty;
+		bool tempEmpty = false;
 		_LOCK(m_Lock)
 		{
 			tempEmpty =	m_LogQueue.empty();

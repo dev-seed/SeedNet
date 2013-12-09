@@ -10,6 +10,9 @@
 
 #define LENGTH_DEFAULTTINYSTUFF				16
 
+// SIZE
+
+
 // CYCLE
 #define	CYCLE_DEFAULT						1
 
