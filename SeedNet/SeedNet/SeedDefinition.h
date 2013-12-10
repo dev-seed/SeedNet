@@ -10,8 +10,10 @@
 
 #define LENGTH_DEFAULTTINYSTUFF				16
 
-// SIZE
+#define LENGTH_ADDRESS						64
 
+// SIZE
+#define SIZE_DEFAULTPACKETDATA				1024
 
 // CYCLE
 #define	CYCLE_DEFAULT						1
@@ -24,4 +26,11 @@ enum LogType
 {
 	Managed,
 	Unmanaged
+};
+
+// Overlapped
+enum SeedOverlappedIoOption
+{
+	IoSend,
+	IoRecv
 };

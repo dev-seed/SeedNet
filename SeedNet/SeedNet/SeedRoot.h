@@ -6,6 +6,7 @@
 #include <WinBase.h>
 #include <time.h>
 #include <mmsystem.h>
+#include <WinSock2.h>
 
 #include <queue>
 #include <vector>
@@ -25,6 +26,7 @@
 #include "SeedDataStructure.h"
 
 #include "SeedLock.h"
+#include "SeedSocket.h"
 
 #include "SeedThread.h"
 

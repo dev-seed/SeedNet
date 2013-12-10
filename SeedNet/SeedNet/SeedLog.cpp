@@ -235,13 +235,14 @@ unsigned __stdcall SeedLogger::Run( void *pArg )
 
 bool SeedLogger::Process()
 {
-	m_LastProcessedTime = timeGetTime();
 	while (true)
 	{
 		if (WaitForSingleObject(m_hEnd, CYCLE_DEFAULT) == WAIT_OBJECT_0)
 		{
 			break;
 		}
+		m_LastProcessedTime = timeGetTime();
+
 		_LOCK(m_Lock)
 		{
 			if (!m_LogList.empty())

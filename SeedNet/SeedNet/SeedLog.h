@@ -49,17 +49,17 @@ class SeedLogger : public SeedThread
 public :
 	virtual ~SeedLogger();
 
-	bool	Create();
-	void	Close();
+	bool		Create();
+	void		Close();
 	
-	bool	Manage(SeedLog* pSeedLog);
-	void	Unmanage(SeedLog* pSeedLog);
+	bool		Manage(SeedLog* pSeedLog);
+	void		Unmanage(SeedLog* pSeedLog);
 
 public :
 	static SeedLogger	&Instance();
 	static unsigned __stdcall Run(void *pArg);
 
-	bool	Process();
+	bool		Process();
 
 private :
 	DWORD			m_LastProcessedTime;
