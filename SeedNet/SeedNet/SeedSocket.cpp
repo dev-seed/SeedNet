@@ -18,7 +18,7 @@ bool SeedSocket::Create()
 		return false;
 	}
 
-	m_Socket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
+	m_Socket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, nullptr, 0, WSA_FLAG_OVERLAPPED);
 	if (m_Socket == INVALID_SOCKET)
 	{
 		return false;
@@ -49,7 +49,7 @@ bool SeedSocket::Connect( const SOCKADDR &Addr )
 {
 	if (Valid())
 	{
-		if (WSAConnect(m_Socket, &Addr, sizeof(SOCKADDR_IN), NULL, NULL, NULL, NULL) == SOCKET_ERROR)
+		if (WSAConnect(m_Socket, &Addr, sizeof(SOCKADDR_IN), nullptr, nullptr, nullptr, nullptr) == SOCKET_ERROR)
 		{
 			ShutDown();
 			return false;
@@ -70,7 +70,7 @@ bool SeedSocket::Connect( WCHAR* Addr, u_short Port )
 	if (Valid())
 	{
 		char transferedAddr[LENGTH_ADDRESS] = {0,};
-		WideCharToMultiByte(CP_ACP, 0, Addr, -1, transferedAddr, LENGTH_ADDRESS, NULL, NULL);
+		WideCharToMultiByte(CP_ACP, 0, Addr, -1, transferedAddr, LENGTH_ADDRESS, nullptr, nullptr);
 
 		SOCKADDR_IN sockAddr;
 		ZeroMemory(&sockAddr, sizeof(SOCKADDR_IN));
@@ -82,7 +82,7 @@ bool SeedSocket::Connect( WCHAR* Addr, u_short Port )
 		if (sockAddr.sin_addr.s_addr == INADDR_NONE)
 		{
 			HOSTENT *pHost = gethostbyname(transferedAddr);
-			if (pHost != NULL)
+			if (pHost != nullptr)
 			{
 				sockAddr.sin_addr.s_addr = ((LPIN_ADDR)pHost->h_addr)->s_addr;
 			}
@@ -115,7 +115,7 @@ bool SeedSocket::Listen( WCHAR* IP, u_short Port )
 	if (Valid())
 	{
 		char transferdAddr[LENGTH_ADDRESS] = {0,};
-		WideCharToMultiByte(CP_ACP, 0, IP, -1, transferdAddr, LENGTH_ADDRESS, NULL ,NULL);
+		WideCharToMultiByte(CP_ACP, 0, IP, -1, transferdAddr, LENGTH_ADDRESS, nullptr ,nullptr);
 
 		SOCKADDR_IN sockAddr;
 		ZeroMemory(&sockAddr, sizeof(SOCKADDR_IN));
@@ -148,18 +148,20 @@ bool SeedSocket::Send( SeedPacketHeader &Header, LPBYTE pData )
 	if (Valid())
 	{
 		// Data
-		LPBYTE	pTempData = new BYTE[SIZE_DEFAULTPACKETDATA];
+		//LPBYTE	pTempData = new BYTE[SIZE_DEFAULTPACKETDATA];
+		LPBYTE pTempData = (LPBYTE)PacketPool::malloc();
 		ZeroMemory(pTempData, SIZE_DEFAULTPACKETDATA);
 		
 		CopyMemory(pTempData, &Header, sizeof(SeedPacketHeader));
 
-		if (Header.DataSize != 0 && pData != NULL)
+		if (Header.DataSize != 0 && pData != nullptr)
 		{
 			CopyMemory(pTempData + sizeof(SeedPacketHeader), pData, Header.DataSize);
 		}
 
 		// Overlapped
-		SeedOverlapped *pTempOverlapped = new SeedOverlapped;
+		//SeedOverlapped *pTempOverlapped = new SeedOverlapped;
+		SeedOverlapped *pTempOverlapped = (SeedOverlapped *)OverlappedPool::malloc();
 		ZeroMemory(pTempOverlapped, sizeof(SeedOverlapped));
 
 		pTempOverlapped->IoOption = IoSend;
@@ -168,7 +170,7 @@ bool SeedSocket::Send( SeedPacketHeader &Header, LPBYTE pData )
 
 		DWORD Flag = 0, ByteTransfer = 0;
 
-		if (WSASend(m_Socket, &(pTempOverlapped->WSABuf), 1, &ByteTransfer, Flag, pTempOverlapped, NULL) == SOCKET_ERROR)
+		if (WSASend(m_Socket, &(pTempOverlapped->WSABuf), 1, &ByteTransfer, Flag, pTempOverlapped, nullptr) == SOCKET_ERROR)
 		{
 			if (WSAGetLastError() != WSA_IO_PENDING)
 			{
@@ -191,11 +193,13 @@ bool SeedSocket::Recv()
 	if (Valid())
 	{
 		// Data
-		LPBYTE pTempData = new BYTE[SIZE_DEFAULTPACKETDATA];
+		//LPBYTE pTempData = new BYTE[SIZE_DEFAULTPACKETDATA];
+		LPBYTE pTempData = (LPBYTE)PacketPool::malloc();
 		ZeroMemory(pTempData, SIZE_DEFAULTPACKETDATA);
 
 		// Overlapped
-		SeedOverlapped *pTempOverlapped = new SeedOverlapped;
+		//SeedOverlapped *pTempOverlapped = new SeedOverlapped;
+		SeedOverlapped *pTempOverlapped = (SeedOverlapped *)OverlappedPool::malloc();
 		ZeroMemory(pTempOverlapped, sizeof(SeedOverlapped));
 
 		pTempOverlapped->IoOption	= IoRecv;
@@ -203,7 +207,7 @@ bool SeedSocket::Recv()
 		pTempOverlapped->WSABuf.len	= SIZE_DEFAULTPACKETDATA;
 
 		DWORD Flag = 0, ByteTransfer = 0;
-		if (WSARecv(m_Socket, &(pTempOverlapped->WSABuf), 1, &ByteTransfer, &Flag, pTempOverlapped, NULL) == SOCKET_ERROR)
+		if (WSARecv(m_Socket, &(pTempOverlapped->WSABuf), 1, &ByteTransfer, &Flag, pTempOverlapped, nullptr) == SOCKET_ERROR)
 		{
 			if (WSAGetLastError() != WSA_IO_PENDING)
 			{

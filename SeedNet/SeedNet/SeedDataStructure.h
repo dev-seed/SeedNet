@@ -1,10 +1,4 @@
 
-// Queue
-typedef std::queue<std::wstring>	WStringQueue;
-
-// pool
-
-
 // PacketHeader
 typedef struct 
 {
@@ -28,6 +22,7 @@ typedef struct
 
 }SeedPacketHeader;
 
+#define SIZE_DEFAULTPACKETHEADER	sizeof(SeedPacketHeader)
 
 // OverlappedEx
 typedef struct  _sSeedOverlapped : public OVERLAPPED
@@ -35,3 +30,21 @@ typedef struct  _sSeedOverlapped : public OVERLAPPED
 	WSABUF	WSABuf;
 	BYTE	IoOption;
 }SeedOverlapped;
+
+#define SIZE_DEFAULTOVERLAPPEDEX	sizeof(SeedOverlapped)
+
+// Tag
+class SeedPacket;
+typedef struct 
+{
+	BYTE Data[SIZE_DEFAULTPACKETDATA*2];
+}SeedBuffer;
+
+// Queue
+typedef std::queue<std::wstring>					WStringQueue;
+
+// pool
+typedef boost::singleton_pool<SeedPacket, SIZE_DEFAULTPACKETHEADER+SIZE_DEFAULTPACKETDATA>		PacketPool;
+typedef boost::singleton_pool<SeedOverlapped, SIZE_DEFAULTOVERLAPPEDEX>							OverlappedPool;
+typedef boost::singleton_pool<SeedBuffer, sizeof(SeedBuffer)>									BufferPool;
+

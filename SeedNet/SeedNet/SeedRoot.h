@@ -19,6 +19,12 @@
 #include <iostream>
 #include <fstream>
 
+// boost
+#include <boost/pool/pool_alloc.hpp>
+#include <boost/lockfree/queue.hpp>
+#include <boost/lockfree/stack.hpp>
+#include <boost/atomic.hpp>
+
 #pragma comment(lib, "ws2_32.lib")
 #pragma comment(lib, "winmm.lib")
 
